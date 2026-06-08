@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% block title %}Predict Crop — CropSense{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-lg-8">
+    <h2 class="fw-bold mb-1"><i class="bi bi-flower2 text-success me-2"></i>Crop Recommendation</h2>
+    <p class="text-muted mb-4">Enter your soil and climate data to get an AI-powered recommendation.</p>
+
+    {% if result %}
+    <!-- Result Card -->
+    <div class="result-card card border-0 rounded-4 shadow mb-4 text-center py-4 px-3">
+      <div class="mb-2">
+        <i class="bi bi-patch-check-fill text-success display-4"></i>
+      </div>
+      <h3 class="fw-bold text-success">Recommended Crop</h3>
+      <h1 class="display-4 fw-bold my-2">{{ result.crop }}</h1>
+      <div class="d-flex justify-content-center align-items-center gap-3 mb-3">
+        <span class="badge bg-success fs-6 px-3 py-2">
+          <i class="bi bi-graph-up me-1"></i>Confidence: {{ result.confidence }}%
+        </span>
+      </div>
+      <div class="progress mx-auto" style="max-width:400px; height:12px;">
+        <div class="progress-bar bg-success" role="progressbar"
+             style="width: {{ result.confidence }}%"
+             aria-valuenow="{{ result.confidence }}" aria-valuemin="0" aria-valuemax="100"></div>
+      </div>
+      <p class="text-muted small mt-3">
+        Based on: N={{ result.values.N }}, P={{ result.values.P }}, K={{ result.values.K }},
+        Temp={{ result.values.temperature }}°C, Humidity={{ result.values.humidity }}%,
+        pH={{ result.values.ph }}, Rainfall={{ result.values.rainfall }}mm
+      </p>
+    </div>
+    {% endif %}
+
+    <!-- Input Form -->
+    <div class="card border-0 shadow-sm rounded-4">
+      <div class="card-body p-4">
+        <h5 class="fw-semibold mb-4"><i class="bi bi-sliders me-2 text-success"></i>Input Parameters</h5>
+        <form method="POST" action="{{ url_for('predict') }}">
+
+          <!-- Soil Nutrients Row -->
+          <div class="row g-3 mb-2">
+            <div class="col-12"><h6 class="text-muted text-uppercase small fw-semibold mb-0">Soil Nutrients (kg/ha)</h6></div>
+
+            <div class="col-md-4">
+              <label class="form-label fw-semibold">Nitrogen (N)</label>
+              <input type="number" name="N" class="form-control"
+                     min="0" max="140" step="0.1" placeholder="0 – 140"
+                     value="{{ result.values.N if result else '' }}" required>
+              <div class="form-text">Typical: 0–140</div>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label fw-semibold">Phosphorus (P)</label>
+              <input type="number" name="P" class="form-control"
+                     min="0" max="145" step="0.1" placeholder="0 – 145"
+                     value="{{ result.values.P if result else '' }}" required>
+              <div class="form-text">Typical: 0–145</div>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label fw-semibold">Potassium (K)</label>
+              <input type="number" name="K" class="form-control"
+                     min="0" max="205" step="0.1" placeholder="0 – 205"
+                     value="{{ result.values.K if result else '' }}" required>
+              <div class="form-text">Typical: 0–205</div>
+            </div>
+          </div>
+
+          <!-- Climate Row -->
+          <div class="row g-3 mb-2 mt-1">
+            <div class="col-12"><h6 class="text-muted text-uppercase small fw-semibold mb-0">Climate Conditions</h6></div>
+
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Temperature (°C)</label>
+              <input type="number" name="temperature" class="form-control"
+                     min="0" max="50" step="0.01" placeholder="8 – 44"
+                     value="{{ result.values.temperature if result else '' }}" required>
+              <div class="form-text">Typical: 8–44°C</div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Humidity (%)</label>
+              <input type="number" name="humidity" class="form-control"
+                     min="0" max="100" step="0.01" placeholder="0 – 100"
+                     value="{{ result.values.humidity if result else '' }}" required>
+              <div class="form-text">Relative humidity 0–100%</div>
+            </div>
+          </div>
+
+          <!-- Soil Quality Row -->
+          <div class="row g-3 mb-4 mt-1">
+            <div class="col-12"><h6 class="text-muted text-uppercase small fw-semibold mb-0">Soil Quality</h6></div>
+
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Soil pH</label>
+              <input type="number" name="ph" class="form-control"
+                     min="0" max="14" step="0.01" placeholder="3.5 – 10"
+                     value="{{ result.values.ph if result else '' }}" required>
+              <div class="form-text">pH scale 0–14</div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-semibold">Rainfall (mm)</label>
+              <input type="number" name="rainfall" class="form-control"
+                     min="0" max="300" step="0.01" placeholder="0 – 299"
+                     value="{{ result.values.rainfall if result else '' }}" required>
+              <div class="form-text">Annual rainfall in mm</div>
+            </div>
+          </div>
+
+          <div class="d-grid">
+            <button type="submit" class="btn btn-success btn-lg fw-semibold py-2">
+              <i class="bi bi-cpu me-2"></i>Get Recommendation
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Quick reference -->
+    <div class="card border-0 bg-light rounded-4 mt-4">
+      <div class="card-body p-3">
+        <h6 class="fw-semibold mb-2"><i class="bi bi-info-circle text-primary me-1"></i>Sample Values</h6>
+        <div class="row g-2 small text-muted">
+          <div class="col-sm-6">🌾 Rice: N=90, P=42, K=43, Temp=21, Hum=82, pH=6.5, Rain=203</div>
+          <div class="col-sm-6">🌽 Maize: N=20, P=67, K=20, Temp=22, Hum=65, pH=6.3, Rain=88</div>
+          <div class="col-sm-6">🍎 Apple: N=21, P=134, K=199, Temp=21, Hum=92, pH=5.9, Rain=114</div>
+          <div class="col-sm-6">🍌 Banana: N=100, P=82, K=50, Temp=27, Hum=80, pH=6.0, Rain=105</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

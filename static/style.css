@@ -1,0 +1,53 @@
+/* ── Global ────────────────────────────────────────────────── */
+body {
+  background-color: #f8fdf8;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+}
+
+/* ── Hero ──────────────────────────────────────────────────── */
+.hero-section {
+  background: linear-gradient(135deg, #1a7f3c 0%, #2ecc71 100%);
+  min-height: 340px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── Step circles ──────────────────────────────────────────── */
+.step-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #1a7f3c;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+/* ── Result card ───────────────────────────────────────────── */
+.result-card {
+  background: linear-gradient(135deg, #e8f8ed 0%, #c8f0d4 100%);
+  border: 2px solid #86e0a8 !important;
+}
+
+/* ── Form controls ─────────────────────────────────────────── */
+.form-control:focus {
+  border-color: #28a745;
+  box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.2);
+}
+
+/* ── Card hover ────────────────────────────────────────────── */
+.card {
+  transition: transform 0.15s ease;
+}
+.card:hover {
+  transform: translateY(-2px);
+}
+
+/* ── Navbar ────────────────────────────────────────────────── */
+.navbar-brand {
+  letter-spacing: 0.5px;
+}
